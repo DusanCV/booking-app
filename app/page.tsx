@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { getUnits } from "@/lib/units";
+import type { Unit } from "@/types/unit";
 
 export default async function HomePage() {
-  let units = [];
+  let units: Unit[] = [];
 
   try {
     units = await getUnits();
