@@ -177,22 +177,24 @@ export function BookingForm({ units }: BookingFormProps) {
   };
 
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">Booking forma</h2>
-        <p className="mt-2 text-sm text-gray-600">
+    <div className="text-slate-900">
+      <div className="mb-7">
+        <h2 className="text-3xl font-semibold text-slate-900">
+          Booking forma
+        </h2>
+        <p className="mt-2 text-base leading-7 text-slate-600">
           Ispuni podatke i provjeri raspoloživost termina.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onCheckAvailability)} className="space-y-5">
+      <form onSubmit={handleSubmit(onCheckAvailability)} className="space-y-6">
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-800">
+          <label className="mb-2 block text-sm font-semibold text-slate-800">
             Jedinica
           </label>
           <select
             {...register("unitId")}
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+            className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
           >
             {units.map((unit) => (
               <option key={unit.id} value={unit.id}>
@@ -209,13 +211,13 @@ export function BookingForm({ units }: BookingFormProps) {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-800">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Check-in
             </label>
             <input
               type="date"
               {...register("checkIn")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
             />
             {errors.checkIn && (
               <p className="mt-1 text-sm text-red-600">
@@ -225,13 +227,13 @@ export function BookingForm({ units }: BookingFormProps) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-800">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Check-out
             </label>
             <input
               type="date"
               {...register("checkOut")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
             />
             {errors.checkOut && (
               <p className="mt-1 text-sm text-red-600">
@@ -243,14 +245,14 @@ export function BookingForm({ units }: BookingFormProps) {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-800">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Broj odraslih
             </label>
             <input
               type="number"
               min={1}
               {...register("adults")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
             />
             {errors.adults && (
               <p className="mt-1 text-sm text-red-600">
@@ -260,14 +262,14 @@ export function BookingForm({ units }: BookingFormProps) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-800">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Broj djece
             </label>
             <input
               type="number"
               min={0}
               {...register("children")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
             />
             {errors.children && (
               <p className="mt-1 text-sm text-red-600">
@@ -277,28 +279,30 @@ export function BookingForm({ units }: BookingFormProps) {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-          <h3 className="text-sm font-semibold text-gray-900">Sažetak cijene</h3>
+        <div className="rounded-[1.8rem] border border-slate-200 bg-slate-50 p-5">
+          <h3 className="text-base font-semibold text-slate-900">
+            Sažetak cijene
+          </h3>
 
-          <div className="mt-3 space-y-2 text-sm text-gray-700">
+          <div className="mt-4 space-y-3 text-base text-slate-700">
             <div className="flex items-center justify-between">
               <span>Odabrana jedinica</span>
-              <span className="font-medium">{selectedUnit?.name ?? "-"}</span>
+              <span className="font-semibold">{selectedUnit?.name ?? "-"}</span>
             </div>
 
             <div className="flex items-center justify-between">
               <span>Cijena po noći</span>
-              <span className="font-medium">
+              <span className="font-semibold">
                 {selectedUnit ? `${selectedUnit.base_price} €` : "-"}
               </span>
             </div>
 
             <div className="flex items-center justify-between">
               <span>Broj noćenja</span>
-              <span className="font-medium">{pricing.nights}</span>
+              <span className="font-semibold">{pricing.nights}</span>
             </div>
 
-            <div className="flex items-center justify-between border-t border-gray-200 pt-2 text-base font-semibold text-gray-900">
+            <div className="flex items-center justify-between border-t border-slate-200 pt-3 text-lg font-semibold text-slate-900">
               <span>Ukupno</span>
               <span>{pricing.totalPrice} €</span>
             </div>
@@ -306,13 +310,13 @@ export function BookingForm({ units }: BookingFormProps) {
         </div>
 
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-800">
+          <label className="mb-2 block text-sm font-semibold text-slate-800">
             Ime i prezime
           </label>
           <input
             type="text"
             {...register("guestName")}
-            className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+            className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
           />
           {errors.guestName && (
             <p className="mt-1 text-sm text-red-600">
@@ -323,13 +327,13 @@ export function BookingForm({ units }: BookingFormProps) {
 
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-800">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Email
             </label>
             <input
               type="email"
               {...register("guestEmail")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
             />
             {errors.guestEmail && (
               <p className="mt-1 text-sm text-red-600">
@@ -339,13 +343,13 @@ export function BookingForm({ units }: BookingFormProps) {
           </div>
 
           <div>
-            <label className="mb-2 block text-sm font-medium text-gray-800">
+            <label className="mb-2 block text-sm font-semibold text-slate-800">
               Telefon
             </label>
             <input
               type="text"
               {...register("guestPhone")}
-              className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+              className="w-full rounded-2xl border border-slate-300 px-4 py-4 text-base outline-none transition focus:border-slate-900"
             />
           </div>
         </div>
@@ -354,7 +358,7 @@ export function BookingForm({ units }: BookingFormProps) {
           <button
             type="submit"
             disabled={isChecking}
-            className="inline-flex items-center justify-center rounded-xl border border-gray-300 px-5 py-3 text-sm font-medium text-gray-900 transition hover:bg-gray-50 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-full border border-slate-300 px-6 py-3.5 text-base font-semibold text-slate-900 transition hover:bg-slate-50 disabled:opacity-50"
           >
             {isChecking ? "Provjeravam..." : "Provjeri dostupnost"}
           </button>
@@ -363,7 +367,7 @@ export function BookingForm({ units }: BookingFormProps) {
             type="button"
             onClick={onSubmitBooking}
             disabled={!canSubmitBooking || isSubmittingBooking || pricing.nights <= 0}
-            className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
+            className="inline-flex items-center justify-center rounded-full bg-slate-950 px-6 py-3.5 text-base font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
           >
             {isSubmittingBooking ? "Šaljem..." : "Pošalji booking upit"}
           </button>
@@ -372,7 +376,7 @@ export function BookingForm({ units }: BookingFormProps) {
 
       {resultMessage && (
         <div
-          className={`mt-6 rounded-2xl border p-4 text-sm ${
+          className={`mt-6 rounded-[1.6rem] border p-5 text-base ${
             isAvailable
               ? "border-green-200 bg-green-50 text-green-800"
               : "border-red-200 bg-red-50 text-red-800"
