@@ -42,27 +42,27 @@ export function LoginForm() {
   return (
     <form onSubmit={handleLogin} className="space-y-5">
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-800">
+        <label className="mb-2 block text-sm font-semibold text-slate-800">
           Email
         </label>
         <input
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+          className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-900"
           placeholder="admin@email.com"
         />
       </div>
 
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-800">
+        <label className="mb-2 block text-sm font-semibold text-slate-800">
           Lozinka
         </label>
         <input
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
-          className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none transition focus:border-gray-900"
+          className="w-full rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-900 outline-none transition focus:border-slate-900"
           placeholder="••••••••"
         />
       </div>
@@ -70,7 +70,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="inline-flex w-full items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
+        className="inline-flex w-full items-center justify-center rounded-full bg-slate-950 px-5 py-3 text-base font-semibold text-white transition hover:bg-slate-800 disabled:opacity-50"
       >
         {loading ? "Prijava..." : "Prijavi se"}
       </button>

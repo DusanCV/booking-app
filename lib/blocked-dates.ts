@@ -1,4 +1,6 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import type { BlockedDate } from "@/types/booking";
 
 type CreateBlockedDateInput = {
@@ -9,7 +11,9 @@ type CreateBlockedDateInput = {
 };
 
 export async function createBlockedDate(input: CreateBlockedDateInput) {
-  const { data, error } = await supabase
+  const supabaseBrowser = createSupabaseBrowserClient();
+
+  const { data, error } = await supabaseBrowser
     .from("blocked_dates")
     .insert({
       unit_id: input.unitId,
@@ -17,7 +21,7 @@ export async function createBlockedDate(input: CreateBlockedDateInput) {
       end_date: input.endDate,
       reason: input.reason ?? null,
     })
-    .select()
+    .select("id")
     .single();
 
   if (error) {
@@ -51,14 +55,61 @@ export async function getBlockedDates() {
   })[];
 }
 
+export async function getOwnerBlockedDates(
+  supabaseClient: SupabaseClient,
+  ownerId: string
+) {
+  const { data, error } = await supabaseClient
+    .from("blocked_dates")
+    .select(`
+      *,
+      units!inner (
+        name,
+        slug,
+        owner_id
+      )
+    `)
+    .eq("units.owner_id", ownerId)
+    .order("start_date", { ascending: true });
+
+  if (error) {
+    throw new Error(
+      `Greška pri dohvaćanju blokiranih datuma vlasnika: ${error.message}`
+    );
+  }
+
+  return (data ?? []).map((item) => ({
+    ...item,
+    units: item.units
+      ? {
+          name: item.units.name,
+          slug: item.units.slug,
+        }
+      : null,
+  })) as (BlockedDate & {
+    units: {
+      name: string;
+      slug: string;
+    } | null;
+  })[];
+}
+
 export async function deleteBlockedDate(id: number) {
-  const { error } = await supabase
+  const supabaseBrowser = createSupabaseBrowserClient();
+
+  const { data, error } = await supabaseBrowser
     .from("blocked_dates")
     .delete()
-    .eq("id", id);
+    .eq("id", id)
+    .select("id")
+    .single();
 
   if (error) {
     throw new Error(`Greška pri odblokiranju datuma: ${error.message}`);
+  }
+
+  if (!data) {
+    throw new Error("Datum nije obrisan.");
   }
 
   return true;

@@ -1,4 +1,5 @@
 import { addDays, format } from "date-fns";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase/client";
 import type { Unit } from "@/types/unit";
 import type { Booking, BlockedDate } from "@/types/booking";
@@ -58,6 +59,113 @@ export async function getAvailabilityBoard(days = 14) {
   }
 
   const units = (unitsData ?? []) as Unit[];
+  const bookings = (bookingsData ?? []) as Booking[];
+  const blockedDates = (blockedData ?? []) as BlockedDate[];
+
+  const rows: AvailabilityRow[] = units.map((unit) => {
+    const unitBookings = bookings.filter((booking) => booking.unit_id === unit.id);
+    const unitBlocks = blockedDates.filter((block) => block.unit_id === unit.id);
+
+    const cells: AvailabilityCell[] = dates.map((date) => {
+      const blocked = unitBlocks.some((block) =>
+        isDateInRange(date, block.start_date, block.end_date)
+      );
+
+      if (blocked) {
+        return { date, status: "blocked" };
+      }
+
+      const confirmed = unitBookings.some(
+        (booking) =>
+          booking.status === "confirmed" &&
+          isDateInRange(date, booking.check_in, booking.check_out)
+      );
+
+      if (confirmed) {
+        return { date, status: "confirmed" };
+      }
+
+      const pending = unitBookings.some(
+        (booking) =>
+          booking.status === "pending" &&
+          isDateInRange(date, booking.check_in, booking.check_out)
+      );
+
+      if (pending) {
+        return { date, status: "pending" };
+      }
+
+      return { date, status: "free" };
+    });
+
+    return {
+      unit,
+      cells,
+    };
+  });
+
+  return {
+    dates,
+    rows,
+  };
+}
+
+export async function getOwnerAvailabilityBoard(
+  supabaseClient: SupabaseClient,
+  ownerId: string,
+  days = 14
+) {
+  const startDate = new Date();
+
+  const dates = Array.from({ length: days }, (_, index) =>
+    format(addDays(startDate, index), "yyyy-MM-dd")
+  );
+
+  const { data: unitsData, error: unitsError } = await supabaseClient
+    .from("units")
+    .select("*")
+    .eq("owner_id", ownerId)
+    .order("id", { ascending: true });
+
+  if (unitsError) {
+    throw new Error(
+      `Greška pri dohvaćanju owner jedinica: ${unitsError.message}`
+    );
+  }
+
+  const units = (unitsData ?? []) as Unit[];
+  const unitIds = units.map((unit) => unit.id);
+
+  if (unitIds.length === 0) {
+    return {
+      dates,
+      rows: [],
+    };
+  }
+
+  const { data: bookingsData, error: bookingsError } = await supabaseClient
+    .from("bookings")
+    .select("*")
+    .in("unit_id", unitIds)
+    .in("status", ["pending", "confirmed"]);
+
+  if (bookingsError) {
+    throw new Error(
+      `Greška pri dohvaćanju owner rezervacija: ${bookingsError.message}`
+    );
+  }
+
+  const { data: blockedData, error: blockedError } = await supabaseClient
+    .from("blocked_dates")
+    .select("*")
+    .in("unit_id", unitIds);
+
+  if (blockedError) {
+    throw new Error(
+      `Greška pri dohvaćanju owner blokada: ${blockedError.message}`
+    );
+  }
+
   const bookings = (bookingsData ?? []) as Booking[];
   const blockedDates = (blockedData ?? []) as BlockedDate[];
 

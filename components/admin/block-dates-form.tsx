@@ -33,18 +33,14 @@ export function BlockDatesForm({ units }: Props) {
       setReason("");
     } catch (error) {
       setMessage(
-        error instanceof Error
-          ? error.message
-          : "Greška pri blokiranju."
+        error instanceof Error ? error.message : "Greška pri blokiranju."
       );
     }
   };
 
   return (
-    <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur">
-      <h2 className="text-2xl font-semibold text-white">Blokiraj datume</h2>
-
-      <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+    <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-5">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <select
           value={unitId}
           onChange={(e) => setUnitId(Number(e.target.value))}
@@ -57,19 +53,21 @@ export function BlockDatesForm({ units }: Props) {
           ))}
         </select>
 
-        <input
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none"
-        />
+        <div className="grid gap-4 md:grid-cols-2">
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none"
+          />
 
-        <input
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none"
-        />
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white outline-none"
+          />
+        </div>
 
         <input
           type="text"
@@ -79,13 +77,15 @@ export function BlockDatesForm({ units }: Props) {
           className="w-full rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white placeholder:text-white/40 outline-none"
         />
 
-        <button className="w-full rounded-full bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.01]">
-          Blokiraj
+        <button className="w-full rounded-full bg-white px-5 py-3 text-sm font-semibold text-slate-950 transition hover:scale-[1.01]">
+          Blokiraj termin
         </button>
       </form>
 
       {message && (
-        <div className="mt-4 text-sm text-white/80">{message}</div>
+        <div className="mt-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/80">
+          {message}
+        </div>
       )}
     </div>
   );
