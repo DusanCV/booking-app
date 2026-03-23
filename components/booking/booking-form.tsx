@@ -26,7 +26,8 @@ const bookingFormSchema = z
     path: ["checkOut"],
   });
 
-type BookingFormValues = z.infer<typeof bookingFormSchema>;
+type BookingFormValues = z.input<typeof bookingFormSchema>;
+type BookingFormSubmitValues = z.output<typeof bookingFormSchema>;
 
 type BookingFormProps = {
   units: Unit[];
@@ -46,7 +47,7 @@ export function BookingForm({ units }: BookingFormProps) {
     watch,
     formState: { errors },
     reset,
-  } = useForm<BookingFormValues>({
+  } = useForm<BookingFormValues, undefined, BookingFormSubmitValues>({
     resolver: zodResolver(bookingFormSchema),
     defaultValues: {
       unitId: units[0]?.id ?? 0,
@@ -84,7 +85,7 @@ export function BookingForm({ units }: BookingFormProps) {
     });
   }, [selectedUnit, watchedCheckIn, watchedCheckOut]);
 
-  const onCheckAvailability = async (values: BookingFormValues) => {
+  const onCheckAvailability = async (values: BookingFormSubmitValues) => {
     try {
       setIsChecking(true);
       setResultMessage(null);
@@ -120,66 +121,65 @@ export function BookingForm({ units }: BookingFormProps) {
   };
 
   const onSubmitBooking = async () => {
-  const values = getValues();
+    const values = getValues();
 
-  try {
-    setIsSubmittingBooking(true);
-    setResultMessage(null);
+    try {
+      setIsSubmittingBooking(true);
+      setResultMessage(null);
 
-    await createBooking({
-      unitId: values.unitId,
-      guestName: values.guestName,
-      guestEmail: values.guestEmail,
-      guestPhone: values.guestPhone,
-      checkIn: values.checkIn,
-      checkOut: values.checkOut,
-      adults: values.adults,
-      children: values.children,
-      totalPrice: pricing.totalPrice,
-    });
+      await createBooking({
+        unitId: Number(values.unitId),
+        guestName: values.guestName,
+        guestEmail: values.guestEmail,
+        guestPhone: values.guestPhone,
+        checkIn: values.checkIn,
+        checkOut: values.checkOut,
+        adults: Number(values.adults),
+        children: Number(values.children),
+        totalPrice: pricing.totalPrice,
+      });
 
-    await sendBookingEmail({
-      unitName: selectedUnit?.name ?? "Jedinica",
-      guestName: values.guestName,
-      guestEmail: values.guestEmail,
-      guestPhone: values.guestPhone,
-      checkIn: values.checkIn,
-      checkOut: values.checkOut,
-      adults: values.adults,
-      children: values.children,
-      totalPrice: pricing.totalPrice,
-    });
+      await sendBookingEmail({
+        unitName: selectedUnit?.name ?? "Jedinica",
+        guestName: values.guestName,
+        guestEmail: values.guestEmail,
+        guestPhone: values.guestPhone,
+        checkIn: values.checkIn,
+        checkOut: values.checkOut,
+        adults: Number(values.adults),
+        children: Number(values.children),
+        totalPrice: pricing.totalPrice,
+      });
 
-    setIsAvailable(true);
-    setCanSubmitBooking(false);
-    setResultMessage("Booking upit je uspješno poslan.");
-    reset({
-      unitId: units[0]?.id ?? 0,
-      checkIn: "",
-      checkOut: "",
-      adults: 2,
-      children: 0,
-      guestName: "",
-      guestEmail: "",
-      guestPhone: "",
-    });
-  } catch (error) {
-    setResultMessage(
-      error instanceof Error
-        ? error.message
-        : "Došlo je do greške pri spremanju booking upita."
-    );
-  } finally {
-    setIsSubmittingBooking(false);
-  }
-};
+      setIsAvailable(true);
+      setCanSubmitBooking(false);
+      setResultMessage("Booking upit je uspješno poslan.");
+
+      reset({
+        unitId: units[0]?.id ?? 0,
+        checkIn: "",
+        checkOut: "",
+        adults: 2,
+        children: 0,
+        guestName: "",
+        guestEmail: "",
+        guestPhone: "",
+      });
+    } catch (error) {
+      setResultMessage(
+        error instanceof Error
+          ? error.message
+          : "Došlo je do greške pri spremanju booking upita."
+      );
+    } finally {
+      setIsSubmittingBooking(false);
+    }
+  };
 
   return (
     <div>
       <div className="mb-6">
-        <h2 className="text-2xl font-semibold text-gray-900">
-          Booking forma
-        </h2>
+        <h2 className="text-2xl font-semibold text-gray-900">Booking forma</h2>
         <p className="mt-2 text-sm text-gray-600">
           Ispuni podatke i provjeri raspoloživost termina.
         </p>
@@ -201,7 +201,9 @@ export function BookingForm({ units }: BookingFormProps) {
             ))}
           </select>
           {errors.unitId && (
-            <p className="mt-1 text-sm text-red-600">{errors.unitId.message}</p>
+            <p className="mt-1 text-sm text-red-600">
+              {errors.unitId.message as string}
+            </p>
           )}
         </div>
 
@@ -252,7 +254,7 @@ export function BookingForm({ units }: BookingFormProps) {
             />
             {errors.adults && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.adults.message}
+                {errors.adults.message as string}
               </p>
             )}
           </div>
@@ -269,23 +271,19 @@ export function BookingForm({ units }: BookingFormProps) {
             />
             {errors.children && (
               <p className="mt-1 text-sm text-red-600">
-                {errors.children.message}
+                {errors.children.message as string}
               </p>
             )}
           </div>
         </div>
 
         <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4">
-          <h3 className="text-sm font-semibold text-gray-900">
-            Sažetak cijene
-          </h3>
+          <h3 className="text-sm font-semibold text-gray-900">Sažetak cijene</h3>
 
           <div className="mt-3 space-y-2 text-sm text-gray-700">
             <div className="flex items-center justify-between">
               <span>Odabrana jedinica</span>
-              <span className="font-medium">
-                {selectedUnit?.name ?? "-"}
-              </span>
+              <span className="font-medium">{selectedUnit?.name ?? "-"}</span>
             </div>
 
             <div className="flex items-center justify-between">

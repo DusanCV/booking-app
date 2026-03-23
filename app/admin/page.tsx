@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
-import { BlockDatesForm } from "@/components/admin/block-dates-form";
 import { BookingRow } from "@/components/admin/booking-row";
 import { LogoutButton } from "@/components/admin/logout-button";
-import { getBookings } from "@/lib/bookings";
+import { BlockDatesForm } from "@/components/admin/block-dates-form";
+import { getBookings, type BookingWithUnitName } from "@/lib/bookings";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getUnits } from "@/lib/units";
+import type { Unit } from "@/types/unit";
 
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
@@ -17,9 +18,8 @@ export default async function AdminPage() {
     redirect("/login");
   }
 
-  const units = await getUnits();
-
-  let bookings = [];
+  const units: Unit[] = await getUnits();
+  let bookings: BookingWithUnitName[] = [];
 
   try {
     bookings = await getBookings();
@@ -93,7 +93,7 @@ export default async function AdminPage() {
             <tbody>
               {bookings.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-6 text-center text-gray-500">
+                  <td colSpan={10} className="px-4 py-6 text-center text-gray-500">
                     Nema rezervacija.
                   </td>
                 </tr>

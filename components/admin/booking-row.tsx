@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { updateBookingStatus } from "@/lib/booking-actions";
+import type { BookingWithUnitName } from "@/lib/bookings";
 
 type Props = {
-  booking: any;
+  booking: BookingWithUnitName;
 };
 
 export function BookingRow({ booking }: Props) {
@@ -37,8 +38,8 @@ export function BookingRow({ booking }: Props) {
         {booking.adults} + {booking.children}
       </td>
       <td className="px-4 py-3">
-  {booking.total_price ? `${booking.total_price} €` : "-"}
-</td>
+        {booking.total_price ? `${booking.total_price} €` : "-"}
+      </td>
       <td className="px-4 py-3">{status}</td>
       <td className="px-4 py-3 flex gap-2">
         <button
