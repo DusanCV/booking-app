@@ -7,10 +7,14 @@ import { BlockedDatesList } from "@/components/admin/blocked-dates-list";
 import { AvailabilityBoard } from "@/components/calendar/availability-board";
 import { getOwnerBookings, type BookingWithUnitName } from "@/lib/bookings";
 import { getOwnerBlockedDates } from "@/lib/blocked-dates";
-import { getOwnerAvailabilityBoard } from "@/lib/availability/get-availability-board";
+import {
+  getOwnerAvailabilityBoard,
+  type AvailabilityRow,
+} from "@/lib/availability/get-availability-board";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getOwnerUnits } from "@/lib/units";
 import type { Unit } from "@/types/unit";
+import type { BlockedDate } from "@/types/booking";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("hr-HR", {
@@ -19,6 +23,13 @@ function formatCurrency(value: number) {
     maximumFractionDigits: 0,
   }).format(value);
 }
+
+type OwnerBlockedDate = BlockedDate & {
+  units: {
+    name: string;
+    slug: string;
+  } | null;
+};
 
 export default async function AdminPage() {
   const supabase = await createSupabaseServerClient();
@@ -32,8 +43,11 @@ export default async function AdminPage() {
   }
 
   let units: Unit[] = [];
-  let blockedDates = [];
-  let availabilityBoard = { dates: [], rows: [] };
+  let blockedDates: OwnerBlockedDate[] = [];
+  let availabilityBoard: { dates: string[]; rows: AvailabilityRow[] } = {
+    dates: [],
+    rows: [],
+  };
   let bookings: BookingWithUnitName[] = [];
 
   try {
